@@ -31,4 +31,5 @@ THEN I am presented with empty fields to enter a new note title and the note’s
 ## Deployment
 This application is deployed on Heroku.
 https://note-taker1201.herokuapp.com/
-![image](https://user-images.githubusercontent.com/88997322/141864831-43e2c00b-1048-45bf-a67b-4c5a52a73a76.png)
+![image](https://user-images.githubusercontent.com/88997322/141864949-9834cbdd-e567-49b9-881f-b612091000a0.png)
+
