@@ -1,86 +1,85 @@
-const express = require("express");
-const path = require("path");
-const fs = require("fs");
-
-
-const app = express();
+const express = require('express');
+const fs = require('fs')
+const path = require('path');
+const api = require('./routes/index.js');
+const notes = require('./routes/notes.js');
+const { uuid } = require('uuidv4')
 
 const PORT = process.env.PORT || 3001;
 
+const app = express();
 
-let notesData = [];
 
+// Middleware for parsing JSON and urlencoded form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "Develop/public")));
+app.use('/api', api);
+
+app.use(express.static('public'));
 
 
-app.get("/api/notes", function(err, res) {
-  try {
-    notesData = fs.readFileSync("Develop/db/db.json", "utf8");
-    notesData = JSON.parse(notesData);
+app.get('/', (req, res) =>
+  res.sendFile(path.join(__dirname, '/public/index.html'))
+);
 
-  } catch (err) {
-    console.log("\n error (in app.get.catch):");
-    console.log(err);
+app.get('/notes', (req, res) =>
+  res.sendFile(path.join(__dirname, '/public/notes.html'))
+);
+
+app.get('/api/notes', (req, res) => {
+fs.readFile('./db/db.json', 'utf8', (err, data) => {
+  if (err) {
+    console.error(err)  
+  } else {
+    res.json(JSON.parse(data))
   }
-  res.json(notesData);
-});
-
-app.post("/api/notes", function(req, res) {
-  try {
-    notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
-    console.log(notesData);
-
-    notesData = JSON.parse(notesData);
-    req.body.id = notesData.length;
-    notesData.push(req.body);
-    notesData = JSON.stringify(notesData);
-    fs.writeFile("./Develop/db/db.json", notesData, "utf8", function(err) {
-      if (err) throw err;
-    });
-
-    res.json(JSON.parse(notesData));
-  } catch (err) {
-    throw err;
-    console.error(err);
-  }
-});
-
-
-app.delete("/api/notes/:id", function(req, res) {
-  try {
-    notesData = fs.readFileSync("./Develop/db/db.json", "utf8");
-    notesData = JSON.parse(notesData);
-    notesData = notesData.filter(function(note) {
-      return note.id != req.params.id;
-    });
     
-    notesData = JSON.stringify(notesData);
-    fs.writeFile("./Develop/db/db.json", notesData, "utf8", function(err) {
-      if (err) throw err;
+})});
+
+app.post('/api/notes', (req, res) => {
+  console.info(`${req.method} request received to add a note`);
+
+
+  const { title, text} = req.body;
+
+ 
+  if (title && text) {
+   
+    const newNote = {
+      title,
+      text,
+      id: uuid()
+    };
+
+    const response = {
+      status: 'success',
+      body: newNote,
+    };
+    
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+      } else {
+        const parsedNote = JSON.parse(data);
+        parsedNote.push(newNote);
+        fs.writeFile('./db/db.json', JSON.stringify(parsedNote), (err) => {
+          if (err) {
+            console.error(err)
+          } else {
+            res.json('Success')
+          }
+        })
+      }
     });
-
-    res.send(JSON.parse(notesData));
-
-  } catch (err) {
-    throw err;
-    console.log(err);
+  } else {
+    res.status(500).json('Error in posting review');
   }
 });
 
-app.get("/notes", function(req, res) {
-  res.sendFile(path.join(__dirname, "Develop/public/notes.html"));
-});
+app.get('*', (req, res) =>
+  res.sendFile(path.join(__dirname, '/public/index.html'))
+);
 
-app.get("*", function(req, res) {
-  res.sendFile(path.join(__dirname, "Develop/public/index.html"));
-});
-
-app.get("/api/notes", function(req, res) {
-  return res.sendFile(path.json(__dirname, "Develop/db/db.json"));
-});
-
-app.listen(PORT, function() {
-  console.log("SERVER IS LISTENING: " + PORT);
-});
+app.listen(PORT, () =>
+  console.log(`App listening at http://localhost:${PORT}`)
+);

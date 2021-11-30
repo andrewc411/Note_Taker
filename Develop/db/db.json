@@ -1,1 +1,10 @@
-[{"title":"Test Title","text":"Test text"},{"id":"31fbd34b-1187-4506-b4bf-d92941e79dfb"},{"id":"47c6e693-f2a3-4b78-80c5-edecf9df8848"},{"id":"631136f9-7057-4cbb-9633-537715ff4406"}]
+[
+    {
+        "title":"Test Title",
+        "text":"Test text"
+    },
+    {
+        "title":"Welcome to Note Taker",
+        "text":"Leave notes for yourself and save them for later!",
+        "id":"85d34e23-e51f-4de6-a9d9-4813e7075107"}
+    ]
