@@ -15,19 +15,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api', api);
 
-app.use(express.static('public'));
+app.use(express.static( './Develop/public'));
+
 
 
 app.get('/', (req, res) =>
-  res.sendFile(path.join(__dirname, '/public/index.html'))
+  res.sendFile(path.join(__dirname, './Develop/public/index.html'))
 );
 
-app.get('/notes', (req, res) =>
-  res.sendFile(path.join(__dirname, '/public/notes.html'))
+app.get('/notes-page', (req, res) =>
+  res.sendFile(path.join(__dirname, './Develop/public/notes.html'))
 );
 
 app.get('/api/notes', (req, res) => {
-fs.readFile('./db/db.json', 'utf8', (err, data) => {
+fs.readFile('./Develop/db/db.json', 'utf8', (err, data) => {
   if (err) {
     console.error(err)  
   } else {
